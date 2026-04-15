@@ -1,8 +1,19 @@
+let jogo;
+
 function setup() {
-  createCanvas(400, 400);
-  background(120, 220,120);
+  createCanvas(windowWidth, windowHeight);
+  jogo = new Jogo();
 }
 
 function draw() {
-    
+  background(200);
+  jogo.draw();
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
+function mousePressed() {
+  jogo.mousePressed(mouseX, mouseY);
 }
