@@ -1,13 +1,13 @@
 class Peca {
-    constructor(x, y, cor) {
-        this.x = x;
-        this.y = y;
+    constructor(tipo, cor) {
+        this.tipo = tipo;
         this.cor = cor;
-        this.raio = 20;
+        this.raio = 15;
     }
 
-    draw() {
+    draw(x, y) {
         fill(this.cor);
-        ellipse(this.x, this.y, this.raio, this.raio);
+        stroke(0);
+        ellipse(x, y, this.raio * 2, this.raio * 2);
     }
 }
