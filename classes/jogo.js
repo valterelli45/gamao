@@ -421,30 +421,33 @@ class Jogo {
     desenharUI() {
         fill(0);
         textSize(16);
-        textAlign(LEFT, BASELINE);
 
-        text("Brancas fora: " + this.foraBrancas.length, 20, 100);
-        text("Vermelhas fora: " + this.foraPretas.length, 20, 120);
+        textAlign(RIGHT, TOP);
+        text("Brancas fora: " + this.foraBrancas.length, width - 20, 10);
+        text("Vermelhas fora: " + this.foraPretas.length, width - 20, 30);
 
+        textAlign(LEFT, TOP);
         if (this.turno == 1) {
-            text("Turno: Brancas", 20, 20);
+            text("Turno: Brancas", 20, 10);
         } else {
-            text("Turno: Vermelhas", 20, 20);
+            text("Turno: Vermelhas", 20, 10);
         }
 
+        textAlign(CENTER, CENTER);
         if (this.dadosLancados == false) {
-            text("Clique para lançar os dados", 20, 40);
+            text("Clique para lançar os dados", width / 2, 20);
         } else {
-            text("Selecione uma peça e mova", 20, 40);
+            text("Selecione uma peça e mova", width / 2, 20);
         }
 
+        textAlign(CENTER, BOTTOM);
         if (this.turno == 1 && this.barraBrancas.length > 0) {
-            text("As brancas têm de jogar a peça da barra", 20, 60);
+            text("As brancas têm de jogar a peça da barra", width / 2, height - 20);
+        }
+        if (this.turno == 2 && this.barraPretas.length > 0) {
+            text("As vermelhas têm de jogar a peça da barra", width / 2, height - 20);
         }
 
-        if (this.turno == 2 && this.barraPretas.length > 0) {
-            text("As vermelhas têm de jogar a peça da barra", 20, 60);
-        }
         if (this.mensagem != "") {
             text(this.mensagem, 20, 80);
         }
@@ -453,14 +456,17 @@ class Jogo {
     // DESENHAR DADOS
     desenharDados() {
         // desenha apenas os dados disponíveis
+        let totalWidth = this.dados.length * 50;
+        let startX = width / 2 - totalWidth / 2;
+
         for (let i = 0; i < this.dados.length; i++) {
             fill(255);
-            rect(20 + i * 50, 50, 40, 40);
+            rect(startX + i * 60, height / 2 - 20, 40, 40);
 
             fill(0);
             textAlign(CENTER, CENTER);
             textSize(18);
-            text(this.dados[i], 40 + i * 50, 70);
+            text(this.dados[i], startX + 20 + i * 60, height / 2);
         }
     }
 
@@ -510,7 +516,7 @@ class Jogo {
 
         return false;
     }
-    
+
     capturarPeca(destinoIndex, tipoPeca) {
         let casa = this.pontos[destinoIndex];
 
