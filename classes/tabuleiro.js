@@ -87,4 +87,30 @@ class Tabuleiro {
 
         return { x, y };
     }
+
+    // DEVOLVE O ÍNDICE DO PONTO CLICADO
+    getPontoClicado(x, y) {
+        let melhorPonto = -1;
+        let menorDistancia = 999999;
+
+        // procurar o ponto mais próximo do clique
+        for (let ponto = 0; ponto < 24; ponto++) {
+            // usamos a posição base de cada ponto
+            let p = this.getPosicao(ponto, 0);
+
+            let d = dist(x, y, p.x, p.y);
+
+            if (d < menorDistancia) {
+                menorDistancia = d;
+                melhorPonto = ponto;
+            }
+        }
+
+        // só aceita o clique se estiver suficientemente perto de uma casa
+        if (menorDistancia < 80) {
+            return melhorPonto;
+        }
+
+        return -1;
+    }
 }

@@ -6,8 +6,9 @@ class Peca {
     }
 
     draw(x, y) {
+        push();
         fill(this.cor);
-        stroke(0);
         ellipse(x, y, this.raio * 2, this.raio * 2);
+        pop();
     }
 }
