@@ -15,8 +15,7 @@ class Tabuleiro {
 
     // FUNDO
     desenharFundo() {
-        fill(210, 180, 140);
-        rect(0, 0, width, height);
+        image(this.imgFundo, 0, 0, width, height);
     }
 
     // TRIÂNGULOS (24 pontos)

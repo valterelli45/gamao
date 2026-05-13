@@ -591,7 +591,7 @@ class Jogo {
 
         return false;
     }
-    
+
     capturarPeca(destinoIndex, tipoPeca) {
         let casa = this.pontos[destinoIndex];
 
