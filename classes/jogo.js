@@ -43,6 +43,8 @@ class Jogo {
 
         // criar peças iniciais
         this.criarPecas();
+
+        this.vencedor = "";
     }
 
     // CRIAR PEÇAS NA POSIÇÃO INICIAL
@@ -84,14 +86,18 @@ class Jogo {
 
     // DESENHO PRINCIPAL
     draw() {
-        this.tabuleiro.draw();
-        this.desenharJogadasValidas();
-        this.desenharPontos();
-        this.desenharUI();
-        this.desenharDados();
-        this.desenharBarra();
-        this.desenharFora();
+    this.tabuleiro.draw();
+    this.desenharJogadasValidas();
+    this.desenharPontos();
+    this.desenharUI();
+    this.desenharDados();
+    this.desenharBarra();
+    this.desenharFora();
+
+    if (this.vencedor != "") {
+        this.desenharVitoria();
     }
+}
 
     // DESENHAR TODAS AS PEÇAS
     desenharPontos() {
@@ -126,8 +132,8 @@ class Jogo {
     desenharBarra() {
         // brancas capturadas (parte de cima da barra)
         for (let i = 0; i < this.barraBrancas.length; i++) {
-            let x = width / 2;
-            let y = this.tabuleiro.margem + 40 + i * 18;
+            let x = this.tabuleiro.getCentroBarra();
+            let y = height - this.tabuleiro.margem - 40 - i * 18;
 
             push();
 
@@ -147,8 +153,8 @@ class Jogo {
 
         // pretas capturadas (parte de baixo da barra)
         for (let i = 0; i < this.barraPretas.length; i++) {
-            let x = width / 2;
-            let y = height - this.tabuleiro.margem - 40 - i * 18;
+            let x = this.tabuleiro.getCentroBarra();
+            let y = this.tabuleiro.margem + 40 + i * 18;
 
             push();
 
@@ -181,8 +187,47 @@ class Jogo {
         }
     }
 
+    desenharVitoria() {
+    push();
+
+    // overlay escuro transparente
+    fill(0, 0, 0, 170);
+    noStroke();
+    rect(0, 0, width, height);
+
+    // caixa central
+    fill(255, 245, 220);
+    stroke(120, 70, 20);
+    strokeWeight(4);
+    rect(width / 2 - 220, height / 2 - 100, 440, 200, 20);
+
+    // texto principal
+    noStroke();
+    fill(80, 40, 10);
+    textAlign(CENTER, CENTER);
+    textSize(34);
+    text("Fim do jogo", width / 2, height / 2 - 35);
+
+    textSize(24);
+
+    if (this.vencedor == "branca") {
+        text("As Brancas venceram!", width / 2, height / 2 + 15);
+    } else {
+        text("As Vermelhas venceram!", width / 2, height / 2 + 15);
+    }
+
+    textSize(14);
+    fill(90);
+    text("Recarrega a página para jogar novamente", width / 2, height / 2 + 60);
+
+    pop();
+}
+
     // LIDAR COM CLIQUE DO RATO
     mousePressed(x, y) {
+        if (this.vencedor != "") {
+        return;
+        }
         // ---------------------------------------
         // 1. PRIMEIRO CLIQUE DO TURNO = LANÇAR DADOS
         // ---------------------------------------
@@ -256,8 +301,7 @@ class Jogo {
                         this.jogadasValidas = [];
 
                         if (this.foraBrancas.length == 15) {
-                            this.mensagem = "Brancas venceram!";
-                            noLoop();
+                            this.vencedor = "branca";
                             return;
                         }
 
@@ -274,8 +318,8 @@ class Jogo {
             }
 
             if (peca.tipo == "preta" && this.todasNoHome("preta")) {
-                // retirar clicando fora do tabuleiro à esquerda
-                if (x < this.tabuleiro.margem) {
+                // retirar clicando fora do tabuleiro à direita
+                if (x > width - this.tabuleiro.margem) {
                     let indiceDado = this.getIndiceDadoParaRetirar(origemIndex, "preta");
 
                     if (indiceDado != -1) {
@@ -286,8 +330,7 @@ class Jogo {
                         this.jogadasValidas = [];
 
                         if (this.foraPretas.length == 15) {
-                            this.mensagem = "Vermelhas venceram!";
-                            noLoop();
+                            this.vencedor = "preta";
                             return;
                         }
 
@@ -419,50 +462,88 @@ class Jogo {
 
     // UI
     desenharUI() {
-        fill(0);
-        textSize(16);
-        textAlign(LEFT, BASELINE);
+    push();
 
-        text("Brancas fora: " + this.foraBrancas.length, 20, 100);
-        text("Vermelhas fora: " + this.foraPretas.length, 20, 120);
+    // caixa de fundo da UI
+    fill(255, 255, 255, 210);
+    stroke(80);
+    strokeWeight(2);
+    rect(15, 15, 250, 140, 10);
 
-        if (this.turno == 1) {
-            text("Turno: Brancas", 20, 20);
-        } else {
-            text("Turno: Vermelhas", 20, 20);
-        }
+    // título do turno
+    noStroke();
+    fill(30);
+    textAlign(LEFT, BASELINE);
+    textSize(18);
 
-        if (this.dadosLancados == false) {
-            text("Clique para lançar os dados", 20, 40);
-        } else {
-            text("Selecione uma peça e mova", 20, 40);
-        }
-
-        if (this.turno == 1 && this.barraBrancas.length > 0) {
-            text("As brancas têm de jogar a peça da barra", 20, 60);
-        }
-
-        if (this.turno == 2 && this.barraPretas.length > 0) {
-            text("As vermelhas têm de jogar a peça da barra", 20, 60);
-        }
-        if (this.mensagem != "") {
-            text(this.mensagem, 20, 80);
-        }
+    if (this.turno == 1) {
+        text("Turno: Brancas", 30, 40);
+    } else {
+        text("Turno: Vermelhas", 30, 40);
     }
+
+    // estado do jogo
+    textSize(14);
+
+    if (this.dadosLancados == false) {
+        text("Clique para lançar os dados", 30, 65);
+    } else {
+        text("Selecione uma peça e mova", 30, 65);
+    }
+
+    // peças retiradas
+    text("Brancas fora: " + this.foraBrancas.length, 30, 90);
+    text("Vermelhas fora: " + this.foraPretas.length, 30, 110);
+
+    // mensagem da barra
+    if (this.turno == 1 && this.barraBrancas.length > 0) {
+        fill(180, 80, 0);
+        text("Brancas: jogar da barra", 30, 135);
+    }
+
+    if (this.turno == 2 && this.barraPretas.length > 0) {
+        fill(180, 80, 0);
+        text("Vermelhas: jogar da barra", 30, 135);
+    }
+
+    // mensagem geral
+    if (this.mensagem != "") {
+        fill(150, 0, 0);
+        text(this.mensagem, 30, 135);
+    }
+
+    pop();
+}
 
     // DESENHAR DADOS
     desenharDados() {
-        // desenha apenas os dados disponíveis
-        for (let i = 0; i < this.dados.length; i++) {
-            fill(255);
-            rect(20 + i * 50, 50, 40, 40);
+    push();
 
-            fill(0);
-            textAlign(CENTER, CENTER);
-            textSize(18);
-            text(this.dados[i], 40 + i * 50, 70);
-        }
+    for (let i = 0; i < this.dados.length; i++) {
+        let x = 285 + i * 48;
+        let y = 25;
+
+        // sombra
+        noStroke();
+        fill(0, 0, 0, 80);
+        rect(x + 3, y + 3, 40, 40, 8);
+
+        // dado
+        fill(255);
+        stroke(60);
+        strokeWeight(2);
+        rect(x, y, 40, 40, 8);
+
+        // número
+        noStroke();
+        fill(20);
+        textAlign(CENTER, CENTER);
+        textSize(18);
+        text(this.dados[i], x + 20, y + 21);
     }
+
+    pop();
+}
 
     // VERIFICA SE O MOVIMENTO ENTRE ORIGEM E DESTINO CORRESPONDE A UM DOS DADOS
     getIndiceDadoValido(origem, destino, tipoPeca) {
@@ -601,9 +682,11 @@ class Jogo {
     existemJogadasPossiveis() {
         let tipoAtual = (this.turno == 1) ? "branca" : "preta";
 
-        // --------------------------------------
-        // SE HOUVER PEÇAS NA BARRA, SÓ ESSAS CONTAM
-        // --------------------------------------
+        // retirar peças também é uma jogada possível
+        if (this.existeRetiradaPossivel(tipoAtual)) {
+            return true;
+        }
+
         if (tipoAtual == "branca" && this.barraBrancas.length > 0) {
             return this.existemJogadasDaBarra("branca");
         }
@@ -612,9 +695,6 @@ class Jogo {
             return this.existemJogadasDaBarra("preta");
         }
 
-        // --------------------------------------
-        // VERIFICAR TODAS AS PEÇAS DO JOGADOR
-        // --------------------------------------
         for (let i = 0; i < 24; i++) {
             let casa = this.pontos[i];
 
@@ -623,7 +703,6 @@ class Jogo {
 
                 if (peca.tipo != tipoAtual) continue;
 
-                // testar todos os dados disponíveis
                 for (let d = 0; d < this.dados.length; d++) {
                     let valor = this.dados[d];
                     let destino;
@@ -634,10 +713,8 @@ class Jogo {
                         destino = i + valor;
                     }
 
-                    // só conta destinos dentro do tabuleiro
                     if (destino < 0 || destino > 23) continue;
 
-                    // se a casa não estiver bloqueada, existe jogada
                     if (!this.casaBloqueada(destino, peca.tipo)) {
                         return true;
                     }
@@ -647,6 +724,28 @@ class Jogo {
 
         return false;
     }
+
+    existeRetiradaPossivel(tipoPeca) {
+    if (!this.todasNoHome(tipoPeca)) return false;
+
+    for (let i = 0; i < 24; i++) {
+        let casa = this.pontos[i];
+
+        for (let j = 0; j < casa.length; j++) {
+            let peca = casa[j];
+
+            if (peca.tipo != tipoPeca) continue;
+
+            let indiceDado = this.getIndiceDadoParaRetirar(i, tipoPeca);
+
+            if (indiceDado != -1) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
     existemJogadasDaBarra(tipoPeca) {
         for (let i = 0; i < this.dados.length; i++) {
@@ -662,6 +761,8 @@ class Jogo {
 
         return false;
     }
+
+    
 
     calcularJogadasValidas(origemIndex, tipoPeca) {
         this.jogadasValidas = [];
@@ -748,17 +849,17 @@ class Jogo {
     }
 
     desenharFora() {
-        // brancas retiradas
+        // brancas retiradas aparecem do lado direito, em cima
         for (let i = 0; i < this.foraBrancas.length; i++) {
             let x = width - 20;
-            let y = height - this.tabuleiro.margem - 20 - i * 8;
+            let y = this.tabuleiro.margem + 20 + i * 8;
             this.foraBrancas[i].draw(x, y);
         }
 
-        // pretas retiradas
+        // vermelhas retiradas aparecem do lado direito, em baixo
         for (let i = 0; i < this.foraPretas.length; i++) {
-            let x = 20;
-            let y = this.tabuleiro.margem + 20 + i * 8;
+            let x = width - 20;
+            let y = height - this.tabuleiro.margem - 20 - i * 8;
             this.foraPretas[i].draw(x, y);
         }
     }

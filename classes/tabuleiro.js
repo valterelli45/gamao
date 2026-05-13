@@ -1,7 +1,10 @@
 class Tabuleiro {
     constructor() {
-        // margem do tabuleiro
+        // margem normal do tabuleiro
         this.margem = 50;
+
+        // espaço reservado à esquerda para a interface
+        this.margemEsquerda = 300;
     }
 
     draw() {
@@ -18,70 +21,60 @@ class Tabuleiro {
 
     // TRIÂNGULOS (24 pontos)
     desenharTriangulos() {
-        let w = width - this.margem * 2;
+        let w = width - this.margemEsquerda - this.margem;
         let h = height - this.margem * 2;
         let passo = w / 12;
 
         for (let i = 0; i < 12; i++) {
-
-            // PARTE DE CIMA (esquerda → direita)
+            // PARTE DE CIMA
             let corCima = (i % 2 == 0) ? 255 : 0;
-
             fill(corCima);
 
             triangle(
-                this.margem + i * passo, this.margem,
-                this.margem + (i + 1) * passo, this.margem,
-                this.margem + (i + 0.5) * passo, this.margem + h / 2
+                this.margemEsquerda + i * passo, this.margem,
+                this.margemEsquerda + (i + 1) * passo, this.margem,
+                this.margemEsquerda + (i + 0.5) * passo, this.margem + h / 2
             );
 
-            // PARTE DE BAIXO (direita → esquerda)
-            let j = 11 - i; // inverso só para baixo
-
+            // PARTE DE BAIXO
+            let j = 11 - i;
             let corBaixo = (i % 2 == 0) ? 255 : 0;
-
             fill(corBaixo);
 
             triangle(
-                this.margem + j * passo, height - this.margem,
-                this.margem + (j + 1) * passo, height - this.margem,
-                this.margem + (j + 0.5) * passo, height - this.margem - h / 2
+                this.margemEsquerda + j * passo, height - this.margem,
+                this.margemEsquerda + (j + 1) * passo, height - this.margem,
+                this.margemEsquerda + (j + 0.5) * passo, height - this.margem - h / 2
             );
         }
     }
 
     // BARRA CENTRAL
     desenharBarra() {
+        let w = width - this.margemEsquerda - this.margem;
+        let centroTabuleiro = this.margemEsquerda + w / 2;
+
         fill(120);
-        rect(width / 2 - 10, this.margem, 20, height - this.margem * 2);
+        rect(centroTabuleiro - 10, this.margem, 20, height - this.margem * 2);
     }
 
-    // POSIÇÃO DAS PEÇAS (fake layout)
+    // POSIÇÃO DAS PEÇAS
     getPosicao(ponto, i) {
-
-        let w = width - this.margem * 2;
-        let h = height - this.margem * 2;
-
+        let w = width - this.margemEsquerda - this.margem;
         let passo = w / 12;
 
         let x, y;
 
-        // -------------------
-        // PARTE DE CIMA (0–11)
-        // -------------------
+        // PARTE DE CIMA
         if (ponto < 12) {
-
-            x = this.margem + (11 - ponto) * passo + passo / 2;
+            x = this.margemEsquerda + (11 - ponto) * passo + passo / 2;
             y = this.margem + 40 + i * 18;
-
-            // -------------------
-            // PARTE DE BAIXO (12–23)
-            // -------------------
-        } else {
-
+        } 
+        // PARTE DE BAIXO
+        else {
             let p = ponto - 12;
 
-            x = this.margem + p * passo + passo / 2;
+            x = this.margemEsquerda + p * passo + passo / 2;
             y = height - this.margem - 40 - i * 18;
         }
 
@@ -93,11 +86,8 @@ class Tabuleiro {
         let melhorPonto = -1;
         let menorDistancia = 999999;
 
-        // procurar o ponto mais próximo do clique
         for (let ponto = 0; ponto < 24; ponto++) {
-            // usamos a posição base de cada ponto
             let p = this.getPosicao(ponto, 0);
-
             let d = dist(x, y, p.x, p.y);
 
             if (d < menorDistancia) {
@@ -106,11 +96,16 @@ class Tabuleiro {
             }
         }
 
-        // só aceita o clique se estiver suficientemente perto de uma casa
         if (menorDistancia < 80) {
             return melhorPonto;
         }
 
         return -1;
+    }
+
+    // CENTRO DA BARRA PARA O JOGO USAR AO DESENHAR PEÇAS CAPTURADAS
+    getCentroBarra() {
+        let w = width - this.margemEsquerda - this.margem;
+        return this.margemEsquerda + w / 2;
     }
 }
