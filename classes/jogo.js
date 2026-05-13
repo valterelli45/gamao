@@ -228,17 +228,13 @@ class Jogo {
         if (this.vencedor != "") {
         return;
         }
-        // ---------------------------------------
         // 1. PRIMEIRO CLIQUE DO TURNO = LANÇAR DADOS
-        // ---------------------------------------
         if (this.dadosLancados == false) {
             this.lancarDados();
             return;
         }
 
-        // ---------------------------------------
         // 2. SE HOUVER PEÇAS NA BARRA, TÊM DE SER JOGADAS PRIMEIRO
-        // ---------------------------------------
         if (this.turno == 1 && this.barraBrancas.length > 0) {
             this.jogarDaBarra("branca", x, y);
             return;
@@ -249,13 +245,9 @@ class Jogo {
             return;
         }
 
-        // ---------------------------------------
         // 3. SE JÁ HÁ UMA PEÇA SELECIONADA
-        // ---------------------------------------
         if (this.pecaSelecionada != null) {
-            // ---------------------------------------
             // 3.1. VER SE O UTILIZADOR CLICOU NOUTRA PEÇA DO MESMO JOGADOR
-            // ---------------------------------------
             for (let i = 0; i < 24; i++) {
                 let pecaList = this.pontos[i];
 
@@ -278,16 +270,12 @@ class Jogo {
                 }
             }
 
-            // ---------------------------------------
             // 3.2. SE NÃO CLICOU NUMA PEÇA, TENTAR MOVER OU RETIRAR
-            // ---------------------------------------
             let origemIndex = this.pecaSelecionada.i;
             let origemLista = this.pontos[origemIndex];
             let peca = origemLista[this.pecaSelecionada.j];
 
-            // ---------------------------------------
-            // 3.2.1. TENTAR RETIRAR PEÇA (BEARING OFF)
-            // ---------------------------------------
+            // 3.2.1. TENTAR RETIRAR PEÇA
             if (peca.tipo == "branca" && this.todasNoHome("branca")) {
                 // retirar clicando fora do tabuleiro à direita
                 if (x > width - this.tabuleiro.margem) {
@@ -346,9 +334,7 @@ class Jogo {
                 }
             }
 
-            // ---------------------------------------
             // 3.2.2. TENTAR MOVER NORMALMENTE
-            // ---------------------------------------
             let destinoIndex = this.tabuleiro.getPontoClicado(x, y);
 
             console.log("Origem:", origemIndex, "Destino:", destinoIndex, "Dados:", this.dados);
@@ -407,9 +393,7 @@ class Jogo {
             return;
         }
 
-        // ---------------------------------------
         // 4. SE NÃO HÁ PEÇA SELECIONADA, TENTAR SELECIONAR UMA
-        // ---------------------------------------
         for (let i = 0; i < 24; i++) {
             let pecaList = this.pontos[i];
 

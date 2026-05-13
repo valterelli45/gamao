@@ -15,9 +15,8 @@ class Tabuleiro {
 
     // FUNDO
     desenharFundo() {
-    fill(210, 180, 140);
-    rect(0, 0, width, height);
-}
+        image(this.imgFundo, 0, 0, width, height);
+    }
 
     // TRIÂNGULOS (24 pontos)
     desenharTriangulos() {
@@ -69,7 +68,7 @@ class Tabuleiro {
         if (ponto < 12) {
             x = this.margemEsquerda + (11 - ponto) * passo + passo / 2;
             y = this.margem + 40 + i * 18;
-        } 
+        }
         // PARTE DE BAIXO
         else {
             let p = ponto - 12;
